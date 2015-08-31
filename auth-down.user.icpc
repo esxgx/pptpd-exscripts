@@ -1,0 +1,7 @@
+#!/bin/sh
+                                                                                                                                                                                        
+while true; do
+        i=`iptables -t nat -nvL PREROUTING --line-numbers | grep $1'[[:space:]]' | cut -d ' ' -f1 | head -qn1`
+        [ -z $i ] && break
+        iptables -t nat -D PREROUTING $i
+done

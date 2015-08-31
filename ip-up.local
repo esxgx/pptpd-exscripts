@@ -1,0 +1,31 @@
+#!/bin/sh
+#
+# This script is run by the pppd after the link is established.
+# It should be used to add routes, set IP address, run the mailq
+# etc.
+#
+# This script is called with the following arguments:
+#    Arg  Name               Example
+#    $1   Interface name     ppp0
+#    $2   The tty            ttyS1
+#    $3   The link speed     38400
+#    $4   Local IP number    12.34.56.78
+#    $5   Peer  IP number    12.34.56.99
+#
+                                                                                                                                                                                        
+mkdir -p /var/run/ppp/$1
+echo "$5" > /var/run/ppp/$1/peerip;echo "$6" > /var/run/ppp/$1/clientip
+                                                                                                                                                                                        
+if [ -e /var/run/ppp/$1/user ]; then
+        ID=`cat /var/run/ppp/$1/user`
+        USR=`grep "$ID" /etc/ppp/users`
+        if [ -n "$USR" ]; then
+                RATE=`echo $USR | cut -d ' ' -f2`
+                if [ $RATE -gt 0 ]; then
+                        BURST=$(( ${RATE}/80+2))
+                        tc qdisc add dev $1 root tbf rate ${RATE}kbit burst ${BURST}kb latency 80ms minburst 1540
+                fi
+        fi
+#       [ -x /etc/ppp/ip-up.user.all ] && /etc/ppp/ip-up.user.all "$@"
+        [ -x /etc/ppp/ip-up.user.$ID ] && /etc/ppp/ip-up.user.$ID "$@"
+fi

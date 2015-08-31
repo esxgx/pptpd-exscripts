@@ -1,0 +1,26 @@
+#!/bin/sh
+#
+# A program or script which is executed after the remote system
+# successfully authenticates itself. It is executed with the parameters
+# <interface-name> <peer-name> <user-name> <tty-device> <speed>
+#
+                                                                                                                                                                                        
+mkdir -p /var/run/ppp/$2
+echo "$1" >> /var/run/ppp/$2/peers
+                                                                                                                                                                                        
+mkdir -p /var/run/ppp/$1
+echo "$2" > /var/run/ppp/$1/user
+                                                                                                                                                                                        
+USR=`grep "$2" /etc/ppp/users`
+TOPS=`echo $USR | cut -d ' ' -f3`
+CONNS=`grep -Fc '' /var/run/ppp/$2/peers`
+                                                                                                                                                                                        
+if [ $TOPS -gt 0 -a $CONNS -gt $TOPS ]; then
+                                                                                                                                                                                        
+        a=`head -n$(( $CONNS - $TOPS)) /var/run/ppp/$2/peers`
+        sed -i "1,$(( $CONNS - $TOPS))d" /var/run/ppp/$2/peers
+                                                                                                                                                                                        
+        for i in ${a[@]}; do
+                kill -HUP `cat /var/run/"$i".pid`
+        done
+fi

@@ -1,0 +1,18 @@
+#!/bin/sh
+#
+# A program or script which is executed after the remote system
+# successfully authenticates itself. It is executed with the parameters
+# <interface-name> <peer-name> <user-name> <tty-device> <speed>
+#
+                                                                                        
+#
+# The environment is cleared before executing this script
+# so the path must be reset
+#
+PATH=/usr/sbin:/sbin:/usr/bin:/bin
+export PATH
+                                                                                        
+[ -x /etc/ppp/auth-down.user.$2 ] && /etc/ppp/auth-down.user.$2 "$@"
+                                                                                        
+rm -Rf /var/run/ppp/$1
+sed -i "/$1/d" /var/run/ppp/$2/peers

@@ -1,0 +1,17 @@
+linux pptpd 账号限速/同时连接数脚本
+
+pptpd如果只有几个账户，意图分别管理且不想用radius，可以试验下该脚本库。
+
+安装说明：
+把脚本库拷贝到/etc/ppp/中即可，重名脚本请自行处理（若原脚本无自行修改可以直接覆盖）
+
+使用方法：
+1）同往常一样使用chap-secret建立用户/设置密码
+2）修改users，每一行的分别设置为 用户名  速度限制(kbps)  连接数限制(0表示不限制)
+
+进阶功能：
+每个用户可以有针对性配置auth-down/ip-up.user脚本来实现特殊功能。
+  具体见：auth-down.user.icpc 和 ip-up.user.icpc 文件
+
+
+Gao Xiang <gx@mail.hfut.edu.cn>
